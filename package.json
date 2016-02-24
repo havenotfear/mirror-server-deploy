@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Magic Mirror Server",
+  "dependencies": {
+    "connect": "^3.4.0",
+    "diont": "^0.9.7",
+    "express": "^4.13.3",
+    "grunt": "^0.4.5",
+    "lodash": "^3.10.1",
+    "node-persist": "0.0.8",
+    "request": "^2.67.0",
+    "serve-static": "^1.10.0",
+    "simple-git": "^1.22.0",
+    "ws": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "startTest": "node magicServer.js"
+	"start": "node mirrorStartup.js"
+  },
+  "author": "Jason Coakley"  
+}
