@@ -1,20 +1,21 @@
 var serverProcess;
 var grunt = require("grunt");
 var git = require("simple-git")();
-var exec = require('child_process').exec;
+var fork = require('child_process').fork;
 
 function pullMaster(callback) {
+    console.log("Checking version.");
     git.pull(function (err, update) {
         callback(update && update.summary && update.summary.changes == 0);
     });
 }
 
 function startServer() {
-    serverProcess = require('child_process').spawn('node', ['./magicServer.js']);
-    serverProcess.stdout.on('data', function (data) {
+    serverProcess = fork(__dirname + '/magicServer.js');
+    serverProcess.on('message', function (data) {
         console.log(data.toString());
     });
-    serverProcess.stderr.on('data', function (data) {
+    serverProcess.on('error', function (data) {
         console.log(data.toString());
     });
 }
@@ -30,6 +31,8 @@ var interval = setInterval(function () {
         if (!isUpToDate) {
             console.log("Out of date. Restarting Server.");
             restartServer();
+        } else {
+            console.log("Up to date.");
         }
     });
 }, 15000);
