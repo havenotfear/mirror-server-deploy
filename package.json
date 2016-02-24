@@ -16,7 +16,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "startTest": "node magicServer.js"
+    "startTest": "node magicServer.js",
 	"start": "node mirrorStartup.js"
   },
   "author": "Jason Coakley"  

@@ -26,7 +26,7 @@ var MESSAGE_TYPES = {
     UPDATE_MIRROR_NAME: "UPDATE_MIRROR_NAME"
 };
 
-app.use(express.static('webapp/dist'));
+app.use(express.static('dist'));
 storage.initSync();
 
 var currentUser = storage.getItem(CURRENT_USER);
