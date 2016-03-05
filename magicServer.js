@@ -53,6 +53,7 @@ function sendToAll(stringObj) {
 }
 
 wss.on('connection', function connection(ws) {
+    console.log("new connection");
     ws.on('message', function incoming(message) {
 		console.log(message);
         message = JSON.parse(message);
@@ -144,6 +145,6 @@ server.listen(port, "0.0.0.0", function() {
     // ======
     // Announce our magic mirror service
     // ======
-    //announceServer();
+    announceServer();
 
 });
