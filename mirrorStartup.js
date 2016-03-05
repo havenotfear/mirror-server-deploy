@@ -1,8 +1,9 @@
 var serverProcess;
-var grunt = require("grunt");
-var git = require("simple-git")();
-var fork = require('child_process').fork;
 var startupFolder = process.argv[2];
+var grunt = require("grunt");
+var git = require("simple-git")(startupFolder);
+var fork = require('child_process').fork;
+
 function pullMaster(callback) {
     console.log("Checking version.");
     git.pull(function (err, update) {
