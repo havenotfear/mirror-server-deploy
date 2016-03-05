@@ -2,7 +2,7 @@ var serverProcess;
 var grunt = require("grunt");
 var git = require("simple-git")();
 var fork = require('child_process').fork;
-
+var startupFolder = process.argv[2];
 function pullMaster(callback) {
     console.log("Checking version.");
     git.pull(function (err, update) {
@@ -11,7 +11,7 @@ function pullMaster(callback) {
 }
 
 function startServer() {
-    serverProcess = fork(__dirname + '/magicServer.js');
+    serverProcess = fork(__dirname + '/magicServer.js', [startupFolder]);
     serverProcess.on('message', function (data) {
         console.log(data.toString());
     });

@@ -26,7 +26,9 @@ var MESSAGE_TYPES = {
     UPDATE_MIRROR_NAME: "UPDATE_MIRROR_NAME"
 };
 
-app.use(express.static('dist'));
+var startupFolder = process.argv[2];
+console.log("folder: " + startupFolder + '/dist');
+app.use(express.static(startupFolder + '/dist'));
 storage.initSync();
 
 var currentUser = storage.getItem(CURRENT_USER);
