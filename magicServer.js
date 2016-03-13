@@ -8,7 +8,10 @@ var server = require('http').createServer(),
     app = express(),
     storage = require('node-persist'),
     _ = require('lodash'),
-    diont = require('diont')(),
+    diont = require('diont')({
+        ttl: 15,
+        broacast: true
+    }),
     port = 8090;
 var SYSTEM_USER = "SYSTEM";
 var CURRENT_USER = "CURRENT_USER";
@@ -135,10 +138,6 @@ function announceServer() {
         port: "8090"
     };
     diont.announceService(service);
-
-    setInterval(function() {
-        diont.queryForServices();
-    }, 15000);
 }
 
 server.on('request', app);
