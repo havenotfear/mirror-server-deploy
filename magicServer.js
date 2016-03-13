@@ -9,8 +9,7 @@ var server = require('http').createServer(),
     storage = require('node-persist'),
     _ = require('lodash'),
     diont = require('diont')({
-        ttl: 15,
-        broacast: true
+        ttl: 15
     }),
     port = 8090;
 var SYSTEM_USER = "SYSTEM";
