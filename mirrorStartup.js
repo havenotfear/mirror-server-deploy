@@ -30,7 +30,7 @@ startServer();
 
 setTimeout(function() {
 	var childProcess = require('child_process'); 
-	childProcess.exec('start chromium-browser --kiosk "localhost:8090"');
+	childProcess.exec('chromium-browser --kiosk "http://localhost:8090"');
 }, 100)
 
 var interval = setInterval(function () {
