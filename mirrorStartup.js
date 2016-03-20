@@ -27,6 +27,12 @@ function restartServer() {
 }
 
 startServer();
+
+setTimeout(function() {
+	var childProcess = require('child_process'); 
+	childProcess.exec('start chrome --kiosk localhost:8090');
+}, 100)
+
 var interval = setInterval(function () {
     pullMaster(function (isUpToDate) {
         if (!isUpToDate) {
