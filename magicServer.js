@@ -9,8 +9,7 @@ var server = require('http').createServer(),
     storage = require('node-persist'),
     _ = require('lodash'),
     diont = require('diont')({
-        ttl: 15,
-        broacast: true
+	ttl: 10
     }),
     port = 8090;
 var SYSTEM_USER = "SYSTEM";
@@ -29,7 +28,9 @@ var MESSAGE_TYPES = {
     UPDATE_MIRROR_NAME: "UPDATE_MIRROR_NAME"
 };
 
-app.use(express.static('webapp/dist'));
+var startupFolder = process.argv[2];
+console.log("folder: " + startupFolder + '/dist');
+app.use(express.static(startupFolder + '/dist'));
 storage.initSync();
 
 var currentUser = storage.getItem(CURRENT_USER);
@@ -56,6 +57,7 @@ function sendToAll(stringObj) {
 }
 
 wss.on('connection', function connection(ws) {
+    console.log("new connection");
     ws.on('message', function incoming(message) {
 		console.log(message);
         message = JSON.parse(message);
@@ -132,7 +134,7 @@ function getMirrorName() {
 
 function announceServer() {
     var service = {
-        name: "Raspberry Pi",//getMirrorName(),
+        name: "raspberry pi",//getMirrorName(),
         port: "8090"
     };
     diont.announceService(service);
