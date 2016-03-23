@@ -9,7 +9,8 @@ var server = require('http').createServer(),
     storage = require('node-persist'),
     _ = require('lodash'),
     diont = require('diont')({
-        ttl: 15
+        ttl: 15,
+        broacast: true
     }),
     port = 8090;
 var SYSTEM_USER = "SYSTEM";
@@ -28,9 +29,7 @@ var MESSAGE_TYPES = {
     UPDATE_MIRROR_NAME: "UPDATE_MIRROR_NAME"
 };
 
-var startupFolder = process.argv[2];
-console.log("folder: " + startupFolder + '/dist');
-app.use(express.static(startupFolder + '/dist'));
+app.use(express.static('webapp/dist'));
 storage.initSync();
 
 var currentUser = storage.getItem(CURRENT_USER);
@@ -57,7 +56,6 @@ function sendToAll(stringObj) {
 }
 
 wss.on('connection', function connection(ws) {
-    console.log("new connection");
     ws.on('message', function incoming(message) {
 		console.log(message);
         message = JSON.parse(message);
@@ -65,8 +63,9 @@ wss.on('connection', function connection(ws) {
         if (message && message.type === MESSAGE_TYPES.SAVE_DASHBOARD) {
             checkUser(message.user);
             storage.setItemSync(message.user, message.dashboard);
-            ws.send(getDashboard(message.user));
-            sendNewDashboard(message.user);
+            if (message.user === currentUser) {
+                sendNewDashboard(message.user);
+            }
         } else if (message.type === MESSAGE_TYPES.SWITCH_USER) {
             currentUser = message.user;
             storage.setItemSync(CURRENT_USER, currentUser);
@@ -133,7 +132,7 @@ function getMirrorName() {
 
 function announceServer() {
     var service = {
-        name: getMirrorName(),
+        name: "Raspberry Pi",//getMirrorName(),
         port: "8090"
     };
     diont.announceService(service);
