@@ -1,1 +1,1 @@
-# Deployment of Magic Mirror Server!
+# Deployment of Adept Smart Mirror Server!
