@@ -13,8 +13,8 @@ if (startupFolder) {
     app.use(express.static('webapp/dist'));
 }
 
-var googleRoute = require('./googleRoute');
-app.use('/', googleRoute);
+//var googleRoute = require('./googleRoute');
+//app.use('/', googleRoute);
 
 //init the storage
 var storage = require('./server/storage-service')();
