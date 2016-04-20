@@ -44,7 +44,10 @@ function listen(checkWifi) {
                     if (enabled) {
                         clearInterval(interval);
                         server.close();
-                        console.log("RESTART");
+                        setTimeout(function() {
+                            console.log("RESTART");
+                        }, 5000);
+
                     }
                 });
             }
