@@ -84,7 +84,7 @@ module.exports = function (app) {
                         // console.log(result_ip)
                         if (result_ip) {
                             console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
-                            return next_step();
+                            next_step("EXIT");
                         } else {
                             console.log("\nWifi is not enabled, Enabling AP for self-configure");
                         }
@@ -104,6 +104,9 @@ module.exports = function (app) {
                     });
                 }
             ], function (error) {
+                if(error === "EXIT") {
+                    return;
+                }
                 if (error) {
                     console.log("ERROR: " + error);
                 }
