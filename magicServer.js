@@ -25,7 +25,7 @@ var diontService = require('./server/diont-service')();
 server.on('request', app);
 
 server.listen(port, "0.0.0.0", function () {
-    console.log("Magic Mirror Server Starting..");
+    console.log("Magic Mirror Server Starting.. " + wifiServer);
     // ======
     // Announce our magic mirror service
     // ======
