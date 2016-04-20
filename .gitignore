@@ -1,2 +1,5 @@
+/node_modules
+/webapp/.idea
+/dist
 /persist
 /.idea

@@ -1,0 +1,11 @@
+<div id="desktopContainer" class="fill-height">
+    <clock-widget ng-if="widget.type === WidgetTypes.CLOCK" widget="widget"></clock-widget>
+    <weather-widget ng-if="widget.type === WidgetTypes.WEATHER" widget="widget"></weather-widget>
+    <news-widget ng-if="widget.type === WidgetTypes.NEWS" widget="widget"></news-widget>
+    <commute-time ng-if="widget.type === WidgetTypes.COMMUTE" widget="widget"></commute-time>
+    <twitter-widget ng-if="widget.type === WidgetTypes.TWITTER" widget="widget"></twitter-widget>
+    <instagram-widget ng-if="widget.type === WidgetTypes.INSTAGRAM" widget="widget"></instagram-widget>
+    <greeting ng-if="widget.type === WidgetTypes.GREETING" widget="widget"></greeting>
+    <todo-checklist ng-if="widget.type === WidgetTypes.TODO" widget="widget"></todo-checklist>
+    <calendar-widget ng-if="widget.type === WidgetTypes.CALENDAR" widget="widget"></calendar-widget>
+</div>

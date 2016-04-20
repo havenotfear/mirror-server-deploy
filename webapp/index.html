@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="magicMirror">
+<head>
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link href="app.less" type="text/css" rel="stylesheet/less">
+    <link href='http://fonts.googleapis.com/css?family=Orbitron|Bitter' rel='stylesheet' type='text/css'/>
+    <!-- Social-feed css -->
+    <link href="bower_components/social-feed/css/jquery.socialfeed.css" rel="stylesheet" type="text/css">
+    <!-- font-awesome for social network icons -->
+    <link href="bower_components/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Livereload script for development only (stripped during dist build) -->
+    <script src="http://localhost:35729/livereload.js" data-concat="false"></script>
+    <!-- JS from Bower Components -->
+    <script src="bower_components/less.js/dist/less-1.6.2.js" data-concat="false"></script>
+    <!-- jQuery -->`
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Codebird.js - required for TWITTER -->
+    <script src="bower_components/codebird-js/codebird.js"></script>
+    <!-- doT.js for rendering templates -->
+    <script src="bower_components/doT/doT.min.js"></script>
+    <!-- Moment.js for showing "time ago" and/or "date"-->
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <!-- Moment Locale to format the date to your language (eg. italian lang)-->
+    <script src="bower_components/moment/locale/it.js"></script>
+    <!-- Social-feed js -->
+    <script src="bower_components/social-feed/js/jquery.socialfeed.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <script src="bower_components/moment-timezone/builds/moment-timezone-with-data.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
+    <link rel="stylesheet" href="bower_components/angular-gridster/dist/angular-gridster.min.css"/>
+    <script src="bower_components/javascript-detect-element-resize/jquery.resize.js"></script>
+    <script src="bower_components/angular-gridster/dist/angular-gridster.min.js"></script>
+    <script src="bower_components/angular-websocket/angular-websocket.js"></script>
+    <script type='text/javascript' src='bower_components/angular-media-queries/match-media.js'></script>
+    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script type="text/javascript" src="bower_components/angular-google-gapi/angular-google-gapi.min.js"></script>
+    <!-- Add New Bower Component JS Above -->
+    <!-- Main App JS -->
+    <script src="app.js"></script>
+    <script src="dashboard/dashboard.js"></script>
+    <script src="dashboard/constants.js"></script>
+    <script src="dashboard/partial/home/home.js"></script>
+    <script src="dashboard/directive/dashboard-widget/dashboard-widget.js"></script>
+    <script src="dashboard/directive/clock-widget/clock-widget.js"></script>
+    <script src="service/dashboard-service/dashboard-service.js"></script>
+    <script src="dashboard/directive/weather-widget/weather-widget.js"></script>
+    <script src="dashboard-config/dashboard-config.js"></script>
+    <script src="dashboard-config/partial/dashboard-config-home/dashboard-config-home.js"></script>
+    <script src="dashboard/service/weather-service.js"></script>
+    <script src="filter/capitalize.js"></script>
+    <script src="dashboard/directive/news-widget/news-widget.js"></script>
+    <script src="dashboard/service/rssFeedService.js"></script>
+    <script src="dashboard/directive/commute-time/commute-time.js"></script>
+    <script src="dashboard/service/commute-service.js"></script>
+    <script src="dashboard/directive/twitter-widget/twitter-widget.js"></script>
+    <script src="dashboard/directive/instagram-widget/instagram-widget.js"></script>
+    <script src="dashboard/directive/text-resize/text-resize.js"></script>
+    <script src="service/async-script-service/async-script-service.js"></script>
+    <script src="service/maps-directions-service/maps-direction-service.js"></script>
+    <script src="dashboard/directive/weather-icon/weather-icon.js"></script>
+</head>
+
+<body>
+<script src="dashboard/directive/greeting/greeting.js"></script>
+<script src="service/time-service.js"></script>
+<script src="service/greeting-service.js"></script>
+<script src="dashboard/directive/todo-checklist/todo-checklist.js"></script>
+<script src="dashboard/directive/calendar-widget/calendar-widget.js"></script>
+<script src="service/google-auth-service/google-auth-service.js"></script>
+<!-- Add New Component JS Above -->
+<div class="fill-height" ng-view></div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<div id="newsWidget" class="flex-fill">
+    <div class="ticker-container">
+        <div class="ticker-text">
+            <span class="newsTick" ng-if="headline.title != ''" ng-repeat="headline in newsHeadline">
+                {{headline.title}} - {{headline.contentSnippet}} |
+            </span>
+        </div>
+    </div>
+</div>

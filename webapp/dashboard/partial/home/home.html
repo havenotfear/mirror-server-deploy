@@ -1,0 +1,9 @@
+<div ng-controller="HomeCtrl as home" style="height: 100%;">
+    <div  gridster="home.gridsterOpts">
+        <ul>
+            <li gridster-item="widget" ng-repeat="widget in home.widgets track by widget.created">
+                <dashboard-widget widget="widget"></dashboard-widget>
+            </li>
+        </ul>
+    </div>
+</div>

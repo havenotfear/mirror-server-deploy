@@ -1,0 +1,32 @@
+/* Component LESS */
+@import "partial/home/home.less";
+@import "directive/dashboard-widget/dashboard-widget.less";
+@import "directive/clock-widget/clock-widget.less";
+@import "directive/weather-widget/weather-widget.less";
+@import "directive/news-widget/news-widget.less";
+@import "directive/commute-time/commute-time.less";
+@import "directive/twitter-widget/twitter-widget.less";
+@import "directive/instagram-widget/instagram-widget.less";
+@import "directive/text-resize/text-resize.less";
+@import "directive/weather-icon/weather-icon.less";
+@import "directive/greeting/greeting.less";
+/* Add Component LESS Above */
+
+.socialContent {
+    display: flex !important;
+    flex-direction: row !important;
+}
+.socialContentName {
+    display: flex;
+    flex: 1;
+    margin-left: 1em;
+    align-items: center;
+}
+.socialTimeAgo {
+    flex: 1;
+    text-align: right;
+}
+.social-feed-container * {
+    color: white !important;
+    background: black;
+}

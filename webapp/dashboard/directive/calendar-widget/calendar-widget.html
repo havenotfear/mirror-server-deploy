@@ -1,0 +1,22 @@
+<div class="text" id="events">
+    <div ng-if="!events || events.length ===0">No Upcoming Events</div>
+    <div ng-repeat="event in events" class="flex flex-row eventSpace">
+        <div class="fa-stack fa-2x flexed">
+            <i class="fa fa-calendar-o fa-stack-2x"></i>
+            <strong class="fa-stack-1x calendar-text">
+                {{ event.start.date || event.start.dateTime | date : "d"}}
+            </strong>
+        </div>
+        <div class="eventDesc flexed-5">
+            <div ng-if="event.start.dateTime" class="title">
+                {{ event.start.dateTime | date : "MMMM d, y h:mm:ss a"}}
+            </div>
+            <div ng-if="event.start.date" class="title">
+                {{ event.start.date | date : "longDate"}}
+            </div>
+            <div class="eventSummary">
+                {{event.summary}}
+            </div>
+        </div>
+    </div>
+</div>

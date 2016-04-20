@@ -1,0 +1,90 @@
+@import "bower_components/bootstrap/less/bootstrap.less";
+//@import "bower_components/bootstrap/less/theme.less";
+@import "bower_components/font-awesome/less/font-awesome.less";
+
+@fa-font-path: "bower_components/font-awesome/fonts";
+
+/* Component LESS */
+@import "dashboard/dashboard.less";
+@import "dashboard-config/dashboard-config.less";
+@import "dashboard/directive/todo-checklist/todo-checklist.less";
+@import "dashboard/directive/calendar-widget/calendar-widget.less";
+/* Add Component LESS Above */
+
+/* Required for Angular UI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
+
+/* Personal preference for BS modal.  The LESS below makes the backdrop white and
+   causes the modal to fade in rather than slide in. */
+//@modal-backdrop-bg: white;
+//.modal {
+//	&.fade {
+//		.transition(opacity .3s);
+//	}
+//	&.fade .modal-dialog {
+//		.translate(0,0);
+//	}
+//}
+
+.text {
+    color: white;
+}
+
+html {
+    font-family: sans-serif; /* 1 */
+    -ms-text-size-adjust: 100%; /* 2 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    color: white;
+    font-size: 1em;
+    line-height: 1.4;
+    height: 100%;
+}
+
+body {
+    background-color: black;
+    overflow: hidden;
+}
+
+.layout {
+    display: flex;
+    flex: 1;
+}
+
+.fill-height {
+    height: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.flexed {
+    flex: 1;
+}
+.flexed-2 {
+    flex: 2;
+}
+.flexed-3 {
+    flex: 3;
+}
+.flexed-4 {
+    flex: 4;
+}
+.flexed-5 {
+    flex: 5;
+}
+.flex-justify-center {
+    justify-content: center;
+}
+.flex-justify-end {
+    justify-content: flex-end;
+}
+.flex-column {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}

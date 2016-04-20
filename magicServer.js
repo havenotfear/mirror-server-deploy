@@ -6,15 +6,18 @@ var server = require('http').createServer(),
 
 
 var startupFolder = process.argv[2];
-
+var wifiServer = null;
 if (startupFolder) {
     app.use(express.static(startupFolder + '/dist'));
+    wifiServer = require('./server/wifi/server')(app);
+    wifiServer.startWifiConifg();
 } else {
     app.use(express.static('webapp/dist'));
 }
 
-//var googleRoute = require('./googleRoute');
-//app.use('/', googleRoute);
+var googleRoute = require('./googleRoute');
+app.use('/', googleRoute);
+
 
 //init the storage
 var storage = require('./server/storage-service')();
@@ -23,11 +26,12 @@ storage.init();
 var webSocketService = require('./server/websocket-service')(server);
 var diontService = require('./server/diont-service');
 
+
 server.on('request', app);
 server.listen(port, "0.0.0.0", function () {
     console.log("Magic Mirror Server Starting..");
     // ======
     // Announce our magic mirror service
     // ======
-    diontService.announceServer();
+    //diontService.announceServer();
 });

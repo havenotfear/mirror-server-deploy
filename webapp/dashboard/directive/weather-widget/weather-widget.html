@@ -1,0 +1,20 @@
+<div id="weatherWidget" class="fill-height flex flex-column">
+    <div ng-if="city">{{city}} Weather</div>
+    <div id="widgetContainer" class="weatherContainer flex flexed-3 flex-row">
+        <weather-icon class="flexed" ng-if="weather" weather="weather"></weather-icon>
+        <div class="text flex flexed flex-column mainWeatherSize">
+            <div>
+                {{tempature}}
+            </div>
+            <div class="weatherDesc">
+                {{weatherDesc | capitalize}}
+            </div>
+        </div>
+    </div>
+    <div class="forecastWeatherSize weatherContainer flex flexed flex-justify-end" ng-repeat="forecastDay in forecast">
+        <weather-icon class="forecastIconWeatherSize" ng-if="forecastDay.weather" weather="forecastDay.weather"></weather-icon>
+        <div class="text" >
+            {{forecastDay.date}} {{forecastDay.maxTemp}}° F / {{forecastDay.minTemp}}° F
+        </div>
+    </div>
+</div>

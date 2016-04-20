@@ -1,0 +1,36 @@
+<div id="weatherIcon">
+    <div class="icon sun-shower" ng-if="currentType === TYPES.Rain || currentType === TYPES.Drizzle">
+        <div class="cloud"></div>
+        <div class="sun" ng-if="showSun">
+            <div class="rays" ng-if="day"></div>
+        </div>
+        <div class="rain"></div>
+    </div>
+    <div class="icon thunder-storm" ng-if="currentType === TYPES.Thunderstorm">
+        <div class="cloud"></div>
+        <div class="lightning">
+            <div class="bolt"></div>
+            <div class="bolt"></div>
+        </div>
+    </div>
+    <div class="icon cloudy" ng-if="currentType === TYPES.Clouds || currentType === TYPES.Atmosphere ||
+            currentType === TYPES.Fog || currentType === TYPES.Mist">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="sun" ng-if="showSun">
+            <div class="rays" ng-if="day"></div>
+        </div>
+    </div>
+    <div class="icon flurries" ng-if="currentType === TYPES.Snow">
+        <div class="cloud"></div>
+        <div class="snow">
+            <div class="flake"></div>
+            <div class="flake"></div>
+        </div>
+    </div>
+    <div class="icon sunny" ng-if="currentType === TYPES.Clear">
+        <div class="sun">
+            <div class="rays" ng-if="day"></div>
+        </div>
+    </div>
+</div>

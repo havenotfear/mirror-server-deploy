@@ -1,0 +1,17 @@
+<div id="commuteTime" ng-show="travelTime" class="flex-column fill-height">
+    <div id="travelTimeBlock" ng-if="valid">
+        <div class="travelTitle"><span id="travelTime">{{travelTime}}</span> minutes to work.</div>
+        <div class="summaryTravel" parent="true">
+            via {{summary}}
+        </div>
+    </div>
+    <div ng-if="valid && traffic" id="trafficTimeBlock">
+        <span id="trafficTime">{{traffic}}</span> minutes of traffic.
+    </div>
+    <div style="flex: 4" class="map" class="flexed">
+
+    </div>
+    <div id="commuteError" ng-if="!valid">
+        Could not get a route.
+    </div>
+</div>

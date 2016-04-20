@@ -1,0 +1,33 @@
+{
+  "name": "magicmirror",
+  "version": "0.0.0",
+  "main": "index.html",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "jquery": "~2.0",
+    "underscore": "~1.5",
+    "bootstrap": "~3.1",
+    "angular": "~1.4",
+    "angular-route": "~1.4",
+    "angular-animate": "~1.4",
+    "angular-resource": "~1.4",
+    "angular-cookies": "~1.4",
+    "angular-mocks": "~1.4",
+    "angular-ui-utils": "~0.1",
+    "angular-bootstrap": "~0.10",
+    "moment": "~2.10.6",
+    "less.js": "~1.6",
+    "font-awesome": "~4.0",
+    "angular-gridster": "~0.13.5",
+    "angular-websocket": "~1.0.14",
+    "angular-media-queries": "~0.5.0",
+    "moment-timezone": "~0.5.0",
+    "angular-local-storage": "~0.2.3",
+    "social-feed": "~0.1.2",
+    "angular-google-gapi": "^0.1.3"
+  }
+}

@@ -1,1 +1,2 @@
-# Deployment of Adept Smart Mirror Server!
+-To run
+node magicServer.js

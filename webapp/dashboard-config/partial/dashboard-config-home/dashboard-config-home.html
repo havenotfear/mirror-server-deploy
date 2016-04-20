@@ -1,0 +1,9 @@
+<div class="fill-height fill-width" ng-controller="DashboardConfigHomeCtrl as dashboardConfig">
+    <div gridster="dashboardConfig.gridsterOpts">
+        <ul>
+            <li gridster-item="widget" ng-repeat="widget in dashboardConfig.widgets" class="fill-height">
+                <dashboard-widget widget="widget" class="fill-height flex"></dashboard-widget>
+            </li>
+        </ul>
+    </div>
+</div>
