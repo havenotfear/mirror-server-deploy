@@ -42,11 +42,11 @@ if (wifiServer) {
 
 function listen(checkWifi) {
     server.listen(port, "0.0.0.0", function () {
-        console.log("Magic Mirror Server Starting.. ");
+        console.log("Magic Mirror Server Starting.. " + checkWifi);
         // ======
         // Announce our magic mirror service
         // ======
-        if (wifiServer && !checkWifi) {
+        if (wifiServer && checkWifi) {
             var interval = null;
             function recheckWifi() {
                 wifiServer.isWifiEnabled(function(enabled) {
