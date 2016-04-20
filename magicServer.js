@@ -31,6 +31,15 @@ var webSocketService = require('./server/websocket-service')(server);
 
 server.on('request', app);
 
+if (wifiServer) {
+    wifiServer.isWifiEnabled(function(enabled) {
+        listen(enabled);
+    });
+} else {
+    listen(false);
+}
+
+
 function listen(checkWifi) {
     server.listen(port, "0.0.0.0", function () {
         console.log("Magic Mirror Server Starting.. ");
@@ -47,7 +56,6 @@ function listen(checkWifi) {
                         setTimeout(function() {
                             console.log("RESTART");
                         }, 5000);
-
                     }
                 });
             }
@@ -58,7 +66,5 @@ function listen(checkWifi) {
             diontService.announceServer();
         }
     });
-
 }
-listen(false);
 
