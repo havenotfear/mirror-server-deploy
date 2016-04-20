@@ -25,6 +25,7 @@ function startServer() {
     }
     serverProcess.on('message', function (data) {
         if (data.toString() === "RESTART") {
+
             restartServer();
         }
         console.log(data.toString());
@@ -35,6 +36,7 @@ function startServer() {
 }
 
 function restartServer() {
+    console.log("Restarting Server");
     serverProcess.kill('SIGINT');
     startServer();
 }
