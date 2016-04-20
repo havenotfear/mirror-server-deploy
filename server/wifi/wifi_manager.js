@@ -101,6 +101,15 @@ module.exports = function() {
         });
     },
 
+        shutdown_wireless = function(wlan_iface, next_step) {
+            function down(next_step) {
+                exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
+                    if (!error) console.log("ifdown " + wlan_iface + " successful...");
+                    next_step();
+                });
+            }
+        },
+
     _reboot_wireless_network = function(wlan_iface, callback) {
         async.series([
             function down(next_step) {
@@ -187,7 +196,9 @@ module.exports = function() {
 
             // Here we need to actually follow the steps to enable the ap
             var series1 = [
-
+                function reboot_network_interfaces(next_step) {
+                    shutdown_wireless(context.wifi_interface, next_step);
+                },
                 // Enable the access point ip and netmask + static
                 // DHCP for the wlan0 interface
                 function update_interfaces(next_step) {
