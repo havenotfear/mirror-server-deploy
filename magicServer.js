@@ -46,13 +46,14 @@ function listen(checkWifi) {
         // ======
         // Announce our magic mirror service
         // ======
-        if (wifiServer && checkWifi) {
+        if (wifiServer && !checkWifi) {
             var interval = null;
             function recheckWifi() {
                 wifiServer.isWifiEnabled(function(enabled) {
+		    console.log("CHECKING WIFI");
                     if (enabled) {
                         function restart() {
-                            console.log("RESTART");
+                            process.send("RESTART");
                         }
                         setTimeout(restart, 5000);
                         clearInterval(interval);

@@ -262,11 +262,12 @@ module.exports = function() {
 
 
             ];
-		async.series(series1, function() {
-		    setTimeout(function() {
-				async.series(series1, callback);
-			}, 5000);
-		});
+		//async.series(series1, function() {
+		//   setTimeout(function() {
+		//		async.series(series1, callback);
+		//	}, 5000);
+		//});
+		async.series(series1, callback);
 
         });
     },
