@@ -24,7 +24,7 @@ function startServer() {
         serverProcess = fork(__dirname + '/magicServer.js');
     }
     serverProcess.on('message', function (data) {
-        if (data.toString() === "RESTART") {
+        if (data.toString() == "RESTART") {
             restartServer();
         }
         console.log(data.toString());

@@ -60,8 +60,7 @@ module.exports = function (app) {
                 response.redirect("/");
             }
             // Success! - exit
-            console.log("Wifi Enabled! - Exiting");
-            process.exit(0);
+            console.log("Wifi Enabled!");
         });
     });
 
