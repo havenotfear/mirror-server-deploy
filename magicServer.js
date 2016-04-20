@@ -31,8 +31,11 @@ server.listen(port, "0.0.0.0", function () {
     // ======
     if (wifiServer) {
         var interval = setInterval(function() {
+            console.log("Checking if wifi is enabled");
             wifiServer.isWifiEnabled(function(enabled) {
+                console.log("wifi is " + enabled);
                 if (enabled) {
+                    console.log("starting websocket server");
                     webSocketService = require('./server/websocket-service')(server);
                     clearInterval(interval);
                 }
