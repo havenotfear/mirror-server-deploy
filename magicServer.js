@@ -20,7 +20,7 @@ var storage = require('./server/storage-service')();
 storage.init();
 
 var webSocketService = require('./server/websocket-service')(server);
-var diontService = require('./server/diont-service');
+var diontService = require('./server/diont-service')();
 
 server.on('request', app);
 
