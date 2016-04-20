@@ -24,13 +24,16 @@ var diontService = require('./server/diont-service')();
 
 server.on('request', app);
 
+
+
 server.listen(port, "0.0.0.0", function () {
-    console.log("Magic Mirror Server Starting.. " + wifiServer);
+    console.log("Magic Mirror Server Starting.. ");
     // ======
     // Announce our magic mirror service
     // ======
     if (wifiServer) {
-        var interval = setInterval(function() {
+        var interval = null;
+        function recheckWifi() {
             console.log("Checking if wifi is enabled");
             wifiServer.isWifiEnabled(function(enabled) {
                 console.log("wifi is " + enabled);
@@ -40,8 +43,11 @@ server.listen(port, "0.0.0.0", function () {
                     clearInterval(interval);
                 }
             });
-        }, 3000);
+        }
+        recheckWifi();
+        interval = setInterval(recheckWifi, 3000);
     } else {
+        console.log("wifi server unaviable");
         diontService.announceServer();
         webSocketService = require('./server/websocket-service')(server);
     }
