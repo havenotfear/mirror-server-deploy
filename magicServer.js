@@ -19,31 +19,28 @@ if (startupFolder) {
 var storage = require('./server/storage-service')();
 storage.init();
 
-var webSocketService = require('./server/websocket-service')(server);
+var webSocketService = null;
 var diontService = require('./server/diont-service')();
 
 server.on('request', app);
 
-function listen(checkWifi) {
-    server.listen(port, "0.0.0.0", function () {
-        console.log("Magic Mirror Server Starting..");
-        // ======
-        // Announce our magic mirror service
-        // ======
-        if (wifiServer && !checkWifi) {
-            var interval = setInterval(function() {
-                wifiServer.isWifiEnabled(function(enabled) {
-                   if (enabled) {
-                       server.close();
-                       clearInterval(interval);
-                       listen(false);
-                   }
-                });
-            }, 3000);
-        } else {
-            diontService.announceServer();
-        }
-    });
-}
-listen(true);
+server.listen(port, "0.0.0.0", function () {
+    console.log("Magic Mirror Server Starting..");
+    // ======
+    // Announce our magic mirror service
+    // ======
+    if (wifiServer) {
+        var interval = setInterval(function() {
+            wifiServer.isWifiEnabled(function(enabled) {
+                if (enabled) {
+                    webSocketService = require('./server/websocket-service')(server);
+                    clearInterval(interval);
+                }
+            });
+        }, 3000);
+    } else {
+        diontService.announceServer();
+        webSocketService = require('./server/websocket-service')(server);
+    }
+});
 
