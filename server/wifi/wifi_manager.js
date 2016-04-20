@@ -186,13 +186,13 @@ module.exports = function() {
             context["wifi_driver_type"] = config.wifi_driver_type;
 
             // Here we need to actually follow the steps to enable the ap
-            async.series([
+            var series1 = [
 
                 // Enable the access point ip and netmask + static
                 // DHCP for the wlan0 interface
                 function update_interfaces(next_step) {
                     write_template_to_file(
-                        "./assets/etc/network/interfaces.ap.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.ap.template",
                         "/etc/network/interfaces",
                         context, next_step);
                 },
@@ -202,7 +202,7 @@ module.exports = function() {
                     var context = config.access_point;
                     // We must enable this to turn on the access point
                     write_template_to_file(
-                        "./assets/etc/dhcp/dhcpcd.conf.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dhcp/dhcpcd.conf.template",
                         "/etc/dhcpcd.conf",
                         context, next_step);
                 },
@@ -210,7 +210,7 @@ module.exports = function() {
                 // Enable the interface in the dhcp server
                 function update_dns_interface(next_step) {
                     write_template_to_file(
-                        "./assets/etc/dnsmasq/dnsmasq.conf.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dnsmasq/dnsmasq.conf.template",
                         "/etc/dnsmasq.conf",
                         context, next_step);
                 },
@@ -218,21 +218,18 @@ module.exports = function() {
                 // Enable hostapd.conf file
                 function update_hostapd_conf(next_step) {
                     write_template_to_file(
-                        "./assets/etc/hostapd/hostapd.conf.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/hostapd/hostapd.conf.template",
                         "/etc/hostapd/hostapd.conf",
                         context, next_step);
                 },
 
                 function update_hostapd_default(next_step) {
                     write_template_to_file(
-                        "./assets/etc/default/hostapd.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/hostapd.template",
                         "/etc/default/hostapd",
                         context, next_step);
                 },
 
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(context.wifi_interface, next_step);
-                },
 
                 function restart_dhcp_service(next_step) {
                     exec("service dhcpcd restart", function(error, stdout, stderr) {
@@ -257,10 +254,20 @@ module.exports = function() {
                         next_step();
                     });
                 },
+		
+		
+                function reboot_network_interfaces(next_step) {
+                    _reboot_wireless_network(context.wifi_interface, next_step);
+                },
 
-                // TODO: Do we need to issue a reboot here?
 
-            ], callback);
+            ];
+		async.series(series1, function() {
+		    setTimeout(function() {
+				async.series(series1, callback);
+			}, 5000);
+		});
+
         });
     },
 
@@ -286,7 +293,7 @@ module.exports = function() {
 
                 function update_dhcpcd(next_step) {
                     write_template_to_file(
-                        "./assets/etc/default/dhcpcd.conf",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/dhcpcd.conf",
                         "/etc/dhcpcd.conf",
                         connection_info, next_step);
                 },
@@ -294,7 +301,7 @@ module.exports = function() {
                 // Update /etc/network/interface with correct info...
                 function update_dhcp(next_step) {
                     write_template_to_file(
-                        "./assets/etc/network/interfaces.wifi.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.wifi.template",
                         "/etc/network/interfaces",
                         connection_info, next_step);
                 },
@@ -302,7 +309,7 @@ module.exports = function() {
                 // Update /etc/network/interface with correct info...
                 function update_wpa(next_step) {
                     write_template_to_file(
-                        "./assets/etc/wpa_supplicant/wpa_supplicant.conf.template",
+                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/wpa_supplicant/wpa_supplicant.conf.template",
                         "/etc/wpa_supplicant/wpa_supplicant.conf",
                         connection_info, next_step);
                 },
@@ -324,11 +331,19 @@ module.exports = function() {
                         next_step();
                     });
                 },
-
-
-                function reboot_network_interfaces(next_step) {
+		function reboot_network_interfaces(next_step) {
                     _reboot_wireless_network(config.wifi_interface, next_step);
                 },
+		function restart_dhclient(next_step) {
+                    setTimeout(function() {
+			exec("sudo /sbin/dhclient wlan0", function(error, stdout, stderr) {
+                        //console.log(stdout);
+                        if (!error) console.log("... dhclient!");
+                        next_step();
+                    });
+			}, 3000);
+                },
+		
 
             ], callback);
         });

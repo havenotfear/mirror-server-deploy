@@ -31,13 +31,19 @@ module.exports = function (app) {
      its bound to, reboot the pi and re-run this script on startup.
      \*****************************************************************************/
     app.get("/api/rescan_wifi", function (request, response) {
-        console.log("Server got /rescan_wifi");
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");        
+	console.log("Server got /rescan_wifi");
         iwlist(function (error, result) {
             log_error_send_success_with(result[0], error, response);
         });
     });
 
     app.post("/api/enable_wifi", function (request, response) {
+	response.header("Access-Control-Allow-Origin", "*");
+	response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+	
+	console.log("Enable Wifi: " + JSON.stringify(request.body));
         var conn_info = {
             wifi_ssid: request.body.wifi_ssid,
             wifi_passcode: request.body.wifi_passcode

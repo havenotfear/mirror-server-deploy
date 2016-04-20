@@ -1,16 +1,21 @@
+module.exports = function() {
+
 var diont = require('diont')({
-    broadcast: true
+	broadcast: true
 });
+	
 var storageService = require("./storage-service")();
 
 function getDiontService(name) {
-    return {
-        name: name ? name : storageService.getMirrorName(),
-        port: "8090"
-    };
+return	{
+		name: name ? name : storageService.getMirrorName(),
+		port: "8090"
+	};
 }
 
 var service = {
+	
+
     announceServer: function () {
         var service = getDiontService();
         diont.announceService(service);
@@ -25,6 +30,5 @@ var service = {
 
     }
 };
-
-
-module.exports = service;
+return service;
+};
