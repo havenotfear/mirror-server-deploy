@@ -84,7 +84,7 @@ module.exports = function (app) {
                         // console.log(result_ip)
                         if (result_ip) {
                             console.log("\nWifi is enabled, and IP " + result_ip + " assigned");
-                            process.exit(0);
+                            return next_step();
                         } else {
                             console.log("\nWifi is not enabled, Enabling AP for self-configure");
                         }
