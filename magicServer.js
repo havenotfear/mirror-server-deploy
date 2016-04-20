@@ -30,29 +30,33 @@ var webSocketService = require('./server/websocket-service')(server);
 
 
 server.on('request', app);
-server.listen(port, "0.0.0.0", function () {
-    console.log("Magic Mirror Server Starting.. ");
-    // ======
-    // Announce our magic mirror service
-    // ======
-    if (wifiServer) {
-        var interval = null;
-        function recheckWifi() {
-            wifiServer.isWifiEnabled(function(enabled) {
-                if (enabled) {
-                    console.log("starting websocket server");
-                    clearInterval(interval);
-			var diontService = require('./server/diont-service')();
-        		diontService.announceServer();
-                }
-            });
+
+function listen(checkWifi) {
+    server.listen(port, "0.0.0.0", function () {
+        console.log("Magic Mirror Server Starting.. ");
+        // ======
+        // Announce our magic mirror service
+        // ======
+        if (wifiServer && !checkWifi) {
+            var interval = null;
+            function recheckWifi() {
+                wifiServer.isWifiEnabled(function(enabled) {
+                    if (enabled) {
+                        console.log("restarting server");
+                        clearInterval(interval);
+                        server.close();
+                        listen(true)
+                    }
+                });
+            }
+            recheckWifi();
+            interval = setInterval(recheckWifi, 3000);
+        } else {
+            var diontService = require('./server/diont-service')();
+            diontService.announceServer();
         }
-        recheckWifi();
-        interval = setInterval(recheckWifi, 3000);
-    } else {
-	var diontService = require('./server/diont-service')();
-        console.log("wifi server unaviable");
-        diontService.announceServer();
-    }
-});
+    });
+
+}
+listen(false);
 
