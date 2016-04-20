@@ -51,11 +51,12 @@ function listen(checkWifi) {
             function recheckWifi() {
                 wifiServer.isWifiEnabled(function(enabled) {
                     if (enabled) {
+                        function restart() {
+                            console.log("RESTART");
+                        }
+                        setTimeout(restart, 5000);
                         clearInterval(interval);
                         server.close();
-                        setTimeout(function() {
-                            console.log("RESTART");
-                        }, 5000);
                     }
                 });
             }
