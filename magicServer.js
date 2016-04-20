@@ -42,10 +42,9 @@ function listen(checkWifi) {
             function recheckWifi() {
                 wifiServer.isWifiEnabled(function(enabled) {
                     if (enabled) {
-                        console.log("restarting server");
                         clearInterval(interval);
                         server.close();
-                        listen(true)
+                        console.log("RESTART");
                     }
                 });
             }
