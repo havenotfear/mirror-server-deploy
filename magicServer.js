@@ -19,13 +19,10 @@ if (startupFolder) {
 var storage = require('./server/storage-service')();
 storage.init();
 
-var webSocketService = null;
+var webSocketService = require('./server/websocket-service')(server);
 var diontService = require('./server/diont-service')();
 
 server.on('request', app);
-
-
-
 server.listen(port, "0.0.0.0", function () {
     console.log("Magic Mirror Server Starting.. ");
     // ======
@@ -37,8 +34,6 @@ server.listen(port, "0.0.0.0", function () {
             wifiServer.isWifiEnabled(function(enabled) {
                 if (enabled) {
                     console.log("starting websocket server");
-                    webSocketService = require('./server/websocket-service')(server);
-                    console.log("webSocketService: " + webSocketService);
                     clearInterval(interval);
                 }
             });
@@ -48,7 +43,6 @@ server.listen(port, "0.0.0.0", function () {
     } else {
         console.log("wifi server unaviable");
         diontService.announceServer();
-        webSocketService = require('./server/websocket-service')(server);
     }
 });
 
