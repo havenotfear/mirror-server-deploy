@@ -15,8 +15,10 @@ function saveDashboard(message) {
     }
 }
 
-function execute(command, callback){
-    exec(command, function(error, stdout, stderr){ callback(stdout); });
+function execute(command, callback) {
+    exec(command, function (error, stdout, stderr) {
+        callback(stdout);
+    });
 }
 
 function sendNewDashboard(user) {
@@ -31,7 +33,7 @@ function rotateScreen(rotation) {
         }
         fs.copySync('/pi/home/mirror-server-deploy/server/assets/' + direction + '.config.txt', '/boot/config.txt');
         storageService.setRotation(rotation);
-        execute('shutdown -r now', function(callback){
+        execute('shutdown -r now', function (callback) {
             console.log(callback);
         });
     }
@@ -67,6 +69,8 @@ function getDashboard(user) {
     dashboard.user = user;
     dashboard.type = "DASHBOARD";
     dashboard.reload = sendReload;
+    dashboard.name = storageService.getMirrorName();
+    dashboard.rotation = storageService.getRotation();
     return JSON.stringify(dashboard);
 }
 function switchUser(user) {
@@ -82,10 +86,10 @@ function saveMirrorName(name, rotation) {
 }
 
 var handleService = {
-    sendDashboard: function(ws) {
+    sendDashboard: function (ws) {
         ws.send(getDashboard());
     },
-    handleMessage: function(message, ws) {
+    handleMessage: function (message, ws) {
         console.log(message);
         message = JSON.parse(message);
         if (message && message.type === constants.MESSAGE_TYPES.SAVE_DASHBOARD) {
