@@ -18,6 +18,17 @@ module.exports = function () {
                 storage.setItem(constants.USERS, users);
             }
         },
+        getRotation: function() {
+            var rotation = storage.getItem(constants.ROTATION);
+            if (!rotation) {
+                rotation  = 0;
+                module.setRotation(rotation);
+            }
+            return rotation;
+        },
+        setRotation: function(rotation) {
+            storage.setItem(constants.ROTATION, rotation);
+        },
         checkUser: function(user) {
             if (!user) {
                 return;

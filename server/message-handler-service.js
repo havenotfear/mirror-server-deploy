@@ -1,9 +1,11 @@
 var constants = require('./constants');
 var _ = require('lodash');
 var diontService = require('./diont-service');
+var fs = require('fs-extra');
 var storageService;
 var wss;
 var sendReload = true;
+var exec = require('child_process').exec;
 
 function saveDashboard(message) {
     storageService.saveDashboard(message.user, message.dashboard);
@@ -13,8 +15,27 @@ function saveDashboard(message) {
     }
 }
 
+function execute(command, callback){
+    exec(command, function(error, stdout, stderr){ callback(stdout); });
+}
+
 function sendNewDashboard(user) {
     sendToAll(getDashboard(user));
+}
+
+function rotateScreen(rotation) {
+    if (storageService.getRotation() !== rotation) {
+        var direction = "landscape";
+        if (rotation === 0) {
+            direction = "portrait";
+        }
+        fs.copySync('/pi/home/mirror-server-deploy/server/assets/' + direction + '.config.txt', '/boot/config.txt');
+        storageService.setRotation(rotation);
+        execute('shutdown -r now', function(callback){
+            console.log(callback);
+        });
+    }
+
 }
 
 function getUsers(message, ws) {
@@ -53,10 +74,11 @@ function switchUser(user) {
     sendNewDashboard(user);
 }
 
-function saveMirrorName(name) {
+function saveMirrorName(name, rotation) {
     var oldName = storageService.getMirrorName();
     storageService.saveMirrorName(name);
     diontService.restart(oldName);
+    rotateScreen(rotation);
 }
 
 var handleService = {
@@ -82,8 +104,8 @@ var handleService = {
         } else if (message.type === constants.MESSAGE_TYPES.GET_USER_DASHBOARD) {
             console.log(JSON.stringify(getDashboard(message.user)));
             ws.send(getDashboard(message.user));
-        } else if (message.type === constants.MESSAGE_TYPES.UPDATE_MIRROR_NAME) {
-            saveMirrorName(message.name);
+        } else if (message.type === constants.MESSAGE_TYPES.UPDATE_MIRROR) {
+            saveMirrorName(message.name, message.rotation);
         } else if (message.type === constants.MESSAGE_TYPES.DELETE_PROFILE) {
             storageService.deleteUser(message.user);
             switchUser(constants.SYSTEM_USER);

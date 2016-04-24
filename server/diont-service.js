@@ -20,6 +20,7 @@ var service = {
         var service = getDiontService();
         diont.announceService(service);
     },
+
     restart: function (oldName) {
         service.renounceService(service);
         service.announceServer();
