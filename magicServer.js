@@ -52,7 +52,7 @@ function listen(checkWifi) {
                 wifiServer.isWifiEnabled(function(enabled) {
                     if (enabled) {
                         function restart() {
-                            console.log("RESTART");
+                            process.send("RESTART");
                         }
                         setTimeout(restart, 5000);
                         clearInterval(interval);
