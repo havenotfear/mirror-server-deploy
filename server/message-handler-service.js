@@ -1,6 +1,6 @@
 var constants = require('./constants');
 var _ = require('lodash');
-var diontService = require('./diont-service');
+var diontService = require('./diont-service')();
 var fs = require('fs-extra');
 var storageService;
 var wss;
