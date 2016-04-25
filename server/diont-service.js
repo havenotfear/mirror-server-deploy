@@ -1,8 +1,8 @@
-module.exports = function() {
-
 var diont = require('diont')({
-	broadcast: true
+    broadcast: true
 });
+
+module.exports = function() {
 	
 var storageService = require("./storage-service")();
 
