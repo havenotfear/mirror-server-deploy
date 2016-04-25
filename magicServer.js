@@ -36,16 +36,13 @@ if (wifiServer) {
         listen(enabled);
     });
 } else {
-    listen(false);
+    listen(true);
 }
 
 
 function listen(checkWifi) {
     server.listen(port, "0.0.0.0", function () {
         console.log("Magic Mirror Server Starting.. " + checkWifi);
-        // ======
-        // Announce our magic mirror service
-        // ======
         if (wifiServer && !checkWifi) {
             var interval = null;
             function recheckWifi() {
