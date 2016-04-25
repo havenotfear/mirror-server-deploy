@@ -31,16 +31,22 @@ function del_config_file(file_name, callback) {
     async.waterfall([
 
         function del_file(next_step) {
-          console.log("... Going to delete an existing file");
-          fs.unlink(file_name, next_step);
+            console.log("... Going to delete an existing file");
+            if (fs.existsSync(file_name)) {
+                fs.unlink(file_name, next_step);
+            }
+            else {
+                next_step();
+            }
+
         }
     ], callback);
 }
 
 /*****************************************************************************\
-    Return a set of functions which we can use to manage and check our wifi
-    connection information
-\*****************************************************************************/
+ Return a set of functions which we can use to manage and check our wifi
+ connection information
+ \*****************************************************************************/
 module.exports = function() {
     // Detect which wifi driver we should use, the rtl871xdrv or the nl80211
     exec("sudo iw list", function(error, stdout, stderr) {
@@ -66,300 +72,301 @@ module.exports = function() {
 
     // Get generic info on an interface
     var _get_wifi_info = function(callback) {
-        var output = {
-            hw_addr:      "<unknown>",
-            inet_addr:    "<unknown>",
-            unassociated: "<unknown>",
-        };
+            var output = {
+                hw_addr:      "<unknown>",
+                inet_addr:    "<unknown>",
+                unassociated: "<unknown>",
+            };
 
-        // Inner function which runs a given command and sets a bunch
-        // of fields
-        function run_command_and_set_fields(cmd, fields, callback) {
-            exec(cmd, function(error, stdout, stderr) {
-                if (error) return callback(error);
-                for (var key in fields) {
-                    re = stdout.match(fields[key]);
-                    if (re && re.length > 1) {
-                        output[key] = re[1];
+            // Inner function which runs a given command and sets a bunch
+            // of fields
+            function run_command_and_set_fields(cmd, fields, callback) {
+                exec(cmd, function(error, stdout, stderr) {
+                    if (error) return callback(error);
+                    for (var key in fields) {
+                        re = stdout.match(fields[key]);
+                        if (re && re.length > 1) {
+                            output[key] = re[1];
+                        }
                     }
-                }
-                callback(null);
-            });
-        }
-
-        // Run a bunch of commands and aggregate info
-        async.series([
-            function run_ifconfig(next_step) {
-                run_command_and_set_fields("sudo ifconfig wlan0", ifconfig_fields, next_step);
-            },
-            function run_iwconfig(next_step) {
-                run_command_and_set_fields("sudo iwconfig wlan0", iwconfig_fields, next_step);
-            },
-        ], function(error) {
-            last_wifi_info = output;
-            return callback(error, output);
-        });
-    },
-
-        shutdown_wireless = function(wlan_iface, next_step) {
-            function down(next_step) {
-                exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
-                    if (!error) console.log("ifdown " + wlan_iface + " successful...");
-                    next_step();
+                    callback(null);
                 });
             }
+
+            // Run a bunch of commands and aggregate info
+            async.series([
+                function run_ifconfig(next_step) {
+                    run_command_and_set_fields("sudo ifconfig wlan0", ifconfig_fields, next_step);
+                },
+                function run_iwconfig(next_step) {
+                    run_command_and_set_fields("sudo iwconfig wlan0", iwconfig_fields, next_step);
+                },
+            ], function(error) {
+                last_wifi_info = output;
+                return callback(error, output);
+            });
         },
 
-    _reboot_wireless_network = function(wlan_iface, callback) {
-        async.series([
-            function down(next_step) {
-                exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
-                    if (!error) console.log("ifdown " + wlan_iface + " successful...");
-                    next_step();
-                });
-            },
-            function up(next_step) {
-                exec("sudo ifup " + wlan_iface, function(error, stdout, stderr) {
-                    if (!error) console.log("ifup " + wlan_iface + " successful...");
-                    next_step();
-                });
-            },
-        ], callback);
-    },
+        shutdown_wireless = function(wlan_iface, next_step) {
+            exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
+                if (!error) console.log("ifdown " + wlan_iface + " successful...");
+                next_step();
+            });
+        },
+
+        _reboot_wireless_network = function(wlan_iface, callback) {
+            async.series([
+                function down(next_step) {
+                    exec("sudo ifdown " + wlan_iface, function(error, stdout, stderr) {
+                        if (!error) console.log("ifdown " + wlan_iface + " successful...");
+                        next_step();
+                    });
+                },
+                function up(next_step) {
+                    exec("sudo ifup " + wlan_iface, function(error, stdout, stderr) {
+                        if (!error) console.log("ifup " + wlan_iface + " successful...");
+                        next_step();
+                    });
+                },
+            ], callback);
+        },
 
     // Wifi related functions
-    _is_wifi_enabled_sync = function(info) {
-        // If we are not an AP, and we have a valid
-        // inet_addr - wifi is enabled!
-        if (null        == _is_ap_enabled_sync(info) &&
-            "<unknown>" != info["inet_addr"]         &&
-            "<unknown>" == info["unassociated"] ) {
-            return info["inet_addr"];
-        }
-        return null;
-    },
+        _is_wifi_enabled_sync = function(info) {
+            // If we are not an AP, and we have a valid
+            // inet_addr - wifi is enabled!
+            if (null        == _is_ap_enabled_sync(info) &&
+                "<unknown>" != info["inet_addr"]         &&
+                "<unknown>" == info["unassociated"] ) {
+                return info["inet_addr"];
+            }
+            return null;
+        },
 
-    _is_wifi_enabled = function(callback) {
-        _get_wifi_info(function(error, info) {
-            if (error) return callback(error, null);
-            return callback(null, _is_wifi_enabled_sync(info));
-        });
-    },
+        _is_wifi_enabled = function(callback) {
+            _get_wifi_info(function(error, info) {
+                if (error) return callback(error, null);
+                return callback(null, _is_wifi_enabled_sync(info));
+            });
+        },
 
     // Access Point related functions
-    _is_ap_enabled_sync = function(info) {
-        // If the hw_addr matches the ap_addr
-        // and the ap_ssid matches "rpi-config-ap"
-        // then we are in AP mode
-        if (info["ap_ssid"] === null || info["ap_ssid"] === undefined){
-          info["ap_ssid"] = config.access_point.ssid
-        }
-        if (info["ap_addr"] === null || info["ap_addr"] === undefined || info["ap_addr"] == 'Not-Associated'){
-          info["ap_addr"] = info["hw_addr"]
-        }
-        var is_ap  =
-            info["hw_addr"] == info["ap_addr"] &&
-            info["ap_ssid"] == config.access_point.ssid;
+        _is_ap_enabled_sync = function(info) {
+            // If the hw_addr matches the ap_addr
+            // and the ap_ssid matches "rpi-config-ap"
+            // then we are in AP mode
+            if (info["ap_ssid"] === null || info["ap_ssid"] === undefined){
+                info["ap_ssid"] = config.access_point.ssid
+            }
+            if (info["ap_addr"] === null || info["ap_addr"] === undefined || info["ap_addr"] == 'Not-Associated'){
+                info["ap_addr"] = info["hw_addr"]
+            }
+            var is_ap  =
+                info["hw_addr"] == info["ap_addr"] &&
+                info["ap_ssid"] == config.access_point.ssid;
 
-        return (is_ap) ? info["hw_addr"].toLowerCase() : null;
-    },
+            return (is_ap) ? info["hw_addr"].toLowerCase() : null;
+        },
 
-    _is_ap_enabled = function(callback) {
-        _get_wifi_info(function(error, info) {
-            if (error) return callback(error, null);
-            return callback(null, _is_ap_enabled_sync(info));
-        });
-    },
+        _is_ap_enabled = function(callback) {
+            _get_wifi_info(function(error, info) {
+                if (error) return callback(error, null);
+                return callback(null, _is_ap_enabled_sync(info));
+            });
+        },
 
     // Enables the accesspoint w/ bcast_ssid. This assumes that both
     // dnsmasq and hostapd are installed using:
     // $sudo npm run-script provision
-    _enable_ap_mode = function(bcast_ssid, callback) {
-        _is_ap_enabled(function(error, result_addr) {
-            if (error) {
-                console.log("ERROR: " + error);
-                return callback(error);
-            }
+        _enable_ap_mode = function(bcast_ssid, callback) {
+            _is_ap_enabled(function(error, result_addr) {
+                if (error) {
+                    console.log("ERROR: " + error);
+                    return callback(error);
+                }
 
-            if (result_addr && !config.access_point.force_reconfigure) {
-                console.log("\nAccess point is enabled with ADDR: " + result_addr);
-                return callback(null);
-            } else if (config.access_point.force_reconfigure) {
-                console.log("\nForce reconfigure enabled - reset AP");
-            } else {
-                console.log("\nAP is not enabled yet... enabling...");
-            }
+                if (result_addr && !config.access_point.force_reconfigure) {
+                    console.log("\nAccess point is enabled with ADDR: " + result_addr);
+                    return callback(null);
+                } else if (config.access_point.force_reconfigure) {
+                    console.log("\nForce reconfigure enabled - reset AP");
+                } else {
+                    console.log("\nAP is not enabled yet... enabling...");
+                }
 
-            var context = config.access_point;
-            context["enable_ap"] = true;
-            context["wifi_driver_type"] = config.wifi_driver_type;
+                var context = config.access_point;
+                context["enable_ap"] = true;
+                context["wifi_driver_type"] = config.wifi_driver_type;
 
-            // Here we need to actually follow the steps to enable the ap
-            var series1 = [
-                function reboot_network_interfaces(next_step) {
-                    shutdown_wireless(context.wifi_interface, next_step);
-                },
-                // Enable the access point ip and netmask + static
-                // DHCP for the wlan0 interface
-                function update_interfaces(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.ap.template",
-                        "/etc/network/interfaces",
-                        context, next_step);
-                },
+                // Here we need to actually follow the steps to enable the ap
+                var series1 = [
 
-                // Enable DHCP conf, set authoritative mode and subnet
-                function update_dhcpcd(next_step) {
-                    var context = config.access_point;
-                    // We must enable this to turn on the access point
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dhcp/dhcpcd.conf.template",
-                        "/etc/dhcpcd.conf",
-                        context, next_step);
-                },
+                    function startWifi(next_step) {
+                        _enable_wifi_mode({wifi_ssid: "", wifi_passcode: ""}, next_step, true);
+                    },
+                    function reboot_network_interfaces(next_step) {
+                        shutdown_wireless(context.wifi_interface, next_step);
+                    },
+                    // Enable the access point ip and netmask + static
+                    // DHCP for the wlan0 interface
+                    function update_interfaces(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.ap.template",
+                            "/etc/network/interfaces",
+                            context, next_step);
+                    },
 
-                // Enable the interface in the dhcp server
-                function update_dns_interface(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dnsmasq/dnsmasq.conf.template",
-                        "/etc/dnsmasq.conf",
-                        context, next_step);
-                },
+                    // Enable DHCP conf, set authoritative mode and subnet
+                    function update_dhcpcd(next_step) {
+                        var context = config.access_point;
+                        // We must enable this to turn on the access point
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dhcp/dhcpcd.conf.template",
+                            "/etc/dhcpcd.conf",
+                            context, next_step);
+                    },
 
-                // Enable hostapd.conf file
-                function update_hostapd_conf(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/hostapd/hostapd.conf.template",
-                        "/etc/hostapd/hostapd.conf",
-                        context, next_step);
-                },
+                    // Enable the interface in the dhcp server
+                    function update_dns_interface(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/dnsmasq/dnsmasq.conf.template",
+                            "/etc/dnsmasq.conf",
+                            context, next_step);
+                    },
 
-                function update_hostapd_default(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/hostapd.template",
-                        "/etc/default/hostapd",
-                        context, next_step);
-                },
+                    // Enable hostapd.conf file
+                    function update_hostapd_conf(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/hostapd/hostapd.conf.template",
+                            "/etc/hostapd/hostapd.conf",
+                            context, next_step);
+                    },
 
-
-                function restart_dhcp_service(next_step) {
-                    exec("service dhcpcd restart", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dhcpcd server restarted!");
-                        next_step();
-                    });
-                },
-
-                function restart_dns_service(next_step) {
-                    exec("service dnsmasq restart", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dnsmasq server restarted!");
-                        next_step();
-                    });
-                },
-
-                function restart_hostapd_service(next_step) {
-                    exec("service hostapd restart", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... hostapd restarted!");
-                        next_step();
-                    });
-                },
-		
-		
-                function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(context.wifi_interface, next_step);
-                },
+                    function update_hostapd_default(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/hostapd.template",
+                            "/etc/default/hostapd",
+                            context, next_step);
+                    },
 
 
-            ];
-		async.series(series1, function() {
-		    setTimeout(function() {
-				async.series(series1, callback);
-			}, 5000);
-		});
+                    function restart_dhcp_service(next_step) {
+                        exec("service dhcpcd restart", function(error, stdout, stderr) {
+                            //console.log(stdout);
+                            if (!error) console.log("... dhcpcd server restarted!");
+                            next_step();
+                        });
+                    },
 
-        });
-    },
+                    function restart_dns_service(next_step) {
+                        exec("service dnsmasq restart", function(error, stdout, stderr) {
+                            //console.log(stdout);
+                            if (!error) console.log("... dnsmasq server restarted!");
+                            next_step();
+                        });
+                    },
+
+                    function restart_hostapd_service(next_step) {
+                        exec("service hostapd restart", function(error, stdout, stderr) {
+                            //console.log(stdout);
+                            if (!error) console.log("... hostapd restarted!");
+                            next_step();
+                        });
+                    },
+
+
+                    function reboot_network_interfaces(next_step) {
+                        _reboot_wireless_network(context.wifi_interface, next_step);
+                    },
+
+
+                ];
+                async.series(series1, callback);
+            });
+        },
 
     // Disables AP mode and reverts to wifi connection
-    _enable_wifi_mode = function(connection_info, callback) {
+        _enable_wifi_mode = function(connection_info, callback, dhrestart) {
 
-        _is_wifi_enabled(function(error, result_ip) {
-            if (error) return callback(error);
+            _is_wifi_enabled(function(error, result_ip) {
+                if (error) return callback(error);
 
-            if (result_ip) {
-                console.log("\nWifi connection is enabled with IP: " + result_ip);
-                return callback(null);
-            }
+                if (result_ip) {
+                    console.log("\nWifi connection is enabled with IP: " + result_ip);
+                    return callback(null);
+                }
 
-            async.series([
+                async.series([
 
-                //
-                function del_hostapd(next_step) {
-                    del_config_file(
-                        "/etc/hostapd/hostapd.conf",
-                        next_step);
-                },
+                    //
+                    function del_hostapd(next_step) {
+                        del_config_file(
+                            "/etc/hostapd/hostapd.conf",
+                            next_step);
+                    },
 
-                function update_dhcpcd(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/dhcpcd.conf",
-                        "/etc/dhcpcd.conf",
-                        connection_info, next_step);
-                },
+                    function update_dhcpcd(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/default/dhcpcd.conf",
+                            "/etc/dhcpcd.conf",
+                            connection_info, next_step);
+                    },
 
-                // Update /etc/network/interface with correct info...
-                function update_dhcp(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.wifi.template",
-                        "/etc/network/interfaces",
-                        connection_info, next_step);
-                },
+                    // Update /etc/network/interface with correct info...
+                    function update_dhcp(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/network/interfaces.wifi.template",
+                            "/etc/network/interfaces",
+                            connection_info, next_step);
+                    },
 
-                // Update /etc/network/interface with correct info...
-                function update_wpa(next_step) {
-                    write_template_to_file(
-                        "/home/pi/mirror-server-deploy/server/wifi/assets/etc/wpa_supplicant/wpa_supplicant.conf.template",
-                        "/etc/wpa_supplicant/wpa_supplicant.conf",
-                        connection_info, next_step);
-                },
+                    // Update /etc/network/interface with correct info...
+                    function update_wpa(next_step) {
+                        write_template_to_file(
+                            "/home/pi/mirror-server-deploy/server/wifi/assets/etc/wpa_supplicant/wpa_supplicant.conf.template",
+                            "/etc/wpa_supplicant/wpa_supplicant.conf",
+                            connection_info, next_step);
+                    },
 
-                // Stop the DHCP server...
-                function restart_dhcp_service(next_step) {
-                    exec("service dnsmasq stop", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dhcp server stopped!");
-                        next_step();
-                    });
-                },
+                    // Stop the DHCP server...
+                    function restart_dhcp_service(next_step) {
+                        exec("service dnsmasq stop", function(error, stdout, stderr) {
+                            //console.log(stdout);
+                            if (!error) console.log("... dhcp server stopped!");
+                            next_step();
+                        });
+                    },
 
-                // Stop the hostapd server...
-                function restart_hostapd_service(next_step) {
-                    exec("service hostapd stop", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... hostapd stop!");
-                        next_step();
-                    });
-                },
-		function reboot_network_interfaces(next_step) {
-                    _reboot_wireless_network(config.wifi_interface, next_step);
-                },
-		function restart_dhclient(next_step) {
-                    setTimeout(function() {
-			exec("sudo /sbin/dhclient wlan0", function(error, stdout, stderr) {
-                        //console.log(stdout);
-                        if (!error) console.log("... dhclient!");
-                        next_step();
-                    });
-			}, 3000);
-                },
-		
+                    // Stop the hostapd server...
+                    function restart_hostapd_service(next_step) {
+                        exec("service hostapd stop", function(error, stdout, stderr) {
+                            //console.log(stdout);
+                            if (!error) console.log("... hostapd stop!");
+                            next_step();
+                        });
+                    },
+                    function reboot_network_interfaces(next_step) {
+                        _reboot_wireless_network(config.wifi_interface, next_step);
+                    },
+                    function restart_dhclient(next_step) {
+                        if (dhrestart) {
+                            next_step();
+                            return;
+                        }
+                        setTimeout(function() {
+                            exec("sudo /sbin/dhclient wlan0", function(error, stdout, stderr) {
+                                //console.log(stdout);
+                                if (!error) console.log("... dhclient!");
+                                next_step();
+                            });
+                        }, 3000);
+                    },
 
-            ], callback);
-        });
 
-    };
+                ], callback);
+            });
+
+        };
 
     return {
         get_wifi_info:           _get_wifi_info,
