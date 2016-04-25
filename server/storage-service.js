@@ -27,7 +27,7 @@ module.exports = function () {
             return rotation;
         },
         setRotation: function(rotation) {
-            storage.setItem(constants.ROTATION, rotation);
+            storage.setItemSync(constants.ROTATION, rotation);
         },
         checkUser: function(user) {
             if (!user) {
