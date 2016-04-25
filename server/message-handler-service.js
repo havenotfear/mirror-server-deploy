@@ -31,7 +31,7 @@ function rotateScreen(rotation) {
         if (rotation === 0) {
             direction = "portrait";
         }
-        fs.copySync('/pi/home/mirror-server-deploy/server/assets/' + direction + '.config.txt', '/boot/config.txt');
+        fs.copySync('/pi/home/mirror-server-deploy/server/assets/boot/' + direction + '.config.txt', '/boot/config.txt');
         storageService.setRotation(rotation);
         execute('shutdown -r now', function (callback) {
             console.log(callback);
