@@ -61,7 +61,6 @@ module.exports = function (app) {
             }
             // Success! - exit
             console.log("Wifi Enabled! - Exiting");
-            process.exit(0);
         });
     });
 
