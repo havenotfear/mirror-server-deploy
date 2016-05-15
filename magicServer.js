@@ -43,10 +43,9 @@ function recheckWifi(interval, server) {
     console.log("checking wifi");
     wifiServer.isWifiEnabled(function(enabled) {
         if (enabled) {
-            function restart() {
+            setTimeout(function(){
                 process.send("RESTART");
-            }
-            setTimeout(restart, 5000);
+            }, 5000);
             clearInterval(interval);
             server.close();
         }
