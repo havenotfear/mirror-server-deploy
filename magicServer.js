@@ -39,26 +39,28 @@ if (wifiServer) {
     listen(true);
 }
 
+function recheckWifi(interval, server) {
+    console.log("checking wifi");
+    wifiServer.isWifiEnabled(function(enabled) {
+        if (enabled) {
+            function restart() {
+                process.send("RESTART");
+            }
+            setTimeout(restart, 5000);
+            clearInterval(interval);
+            server.close();
+        }
+    });
+}
 
 function listen(checkWifi) {
     server.listen(port, "0.0.0.0", function () {
         console.log("Magic Mirror Server Starting.. " + checkWifi);
         if (wifiServer && !checkWifi) {
-            var interval = null;
-            function recheckWifi() {
-                wifiServer.isWifiEnabled(function(enabled) {
-                    if (enabled) {
-                        function restart() {
-                            process.send("RESTART");
-                        }
-                        setTimeout(restart, 5000);
-                        clearInterval(interval);
-                        server.close();
-                    }
-                });
-            }
-            recheckWifi();
-            interval = setInterval(recheckWifi, 3000);
+            var interval = setInterval(function() {
+                recheckWifi(interval, server);
+            }, 3000);
+            recheckWifi(interval, server);
         } else {
             console.log("starting diont")
             var diontService = require('./server/diont-service')();
