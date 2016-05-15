@@ -1,6 +1,5 @@
 var constants = require('./constants');
 var _ = require('lodash');
-var diontService = require('./diont-service')();
 var fs = require('fs-extra');
 var storageService;
 var wss;
@@ -79,6 +78,7 @@ function switchUser(user) {
 }
 
 function saveMirrorName(name, rotation) {
+    var diontService = require('./diont-service')();
     var oldName = storageService.getMirrorName();
     storageService.saveMirrorName(name);
     diontService.restart(oldName);
