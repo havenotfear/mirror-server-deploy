@@ -61,6 +61,7 @@ module.exports = function (app) {
             }
             // Success! - exit
             console.log("Wifi Enabled! - Exiting");
+            exec("sudo reboot");
         });
     });
 
