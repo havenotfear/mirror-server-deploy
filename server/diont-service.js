@@ -1,9 +1,17 @@
-var diont = require('diont')({
-    broadcast: true
-});
+var diont = null;
 
 module.exports = function() {
-	
+	if (!diont) {
+        try {
+            console.log("Diont not loaded yet. Loading..");
+            diont = require('diont')({
+                broadcast: true
+            });
+        } catch (e) {
+            console.log("Could not load diont");
+        }
+    }
+
 var storageService = require("./storage-service")();
 
 function getDiontService(name) {
