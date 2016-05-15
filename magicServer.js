@@ -60,6 +60,7 @@ function listen(checkWifi) {
             recheckWifi();
             interval = setInterval(recheckWifi, 3000);
         } else {
+            console.log("starting diont")
             var diontService = require('./server/diont-service')();
             diontService.announceServer();
         }
