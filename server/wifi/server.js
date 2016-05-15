@@ -3,7 +3,7 @@ var async = require("async"),
     dependency_manager = require("./dependency_manager")(),
     iwlist     = require("./iwlist"),
     config = require("./config.json");
-
+var exec    = require("child_process").exec;
 // Helper function to log errors and send a generic status "SUCCESS"
 // message to the caller
 function log_error_send_success_with(success_obj, error, response) {
@@ -61,6 +61,7 @@ module.exports = function (app) {
             }
             // Success! - exit
             console.log("Wifi Enabled! - Exiting");
+
             exec("sudo reboot");
         });
     });
