@@ -39,10 +39,11 @@ if (wifiServer) {
     listen(true);
 }
 
-function restart() {
+function restart(server) {
     setTimeout(function(){
         console.log("Sending restart");
         process.send("RESTART");
+        server.close();
     }, 5000);
 }
 
@@ -50,18 +51,13 @@ function recheckWifi(interval, server) {
     console.log("checking wifi");
     wifiServer.isWifiEnabled(function(enabled) {
         if (enabled) {
-            restart();
+            restart(server);
             clearInterval(interval);
-            server.close();
         }
     });
 }
 
 function listen(checkWifi) {
-    setTimeout(function(){
-        console.log("Sending restart");
-        process.send("RESTART");
-    }, 5000);
     server.listen(port, "0.0.0.0", function () {
         console.log("Magic Mirror Server Starting.. " + checkWifi);
         if (wifiServer && !checkWifi) {
