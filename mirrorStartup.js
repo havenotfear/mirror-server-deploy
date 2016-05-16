@@ -20,6 +20,12 @@ function pullMaster(callback) {
 
 function startProfileRecognition() {
     recogProcess = exec("sudo ./a.out", ['/home/pi/cvMotion/newProject']);
+    recogProcess.on('message', function (data) {
+        console.log("Recog: " + data.toString());
+    });
+    recogProcess.on('error', function (data) {
+        console.log("Recog error: " + data.toString());
+    });
 }
 
 function startServer() {
