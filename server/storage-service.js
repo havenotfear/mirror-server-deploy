@@ -53,7 +53,7 @@ module.exports = function () {
         },
         currentUser: currentUser,
         switchUser: function (user) {
-            currentUser = user;
+            module.currentUser = user;
             storage.setItemSync(constants.CURRENT_USER, currentUser);
         },
         userCaptured: function (user) {
