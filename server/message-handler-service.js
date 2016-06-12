@@ -8,8 +8,10 @@ var exec = require('child_process').exec;
 
 function saveDashboard(message) {
     storageService.saveDashboard(message.user, message.dashboard);
-    storageService.checkUser(message.user);
-    if (message.user === storageService.currentUser) {
+    storageService.checkUser(message.user); 
+    console.log("message user: " + message.user);
+    console.log("currentUser: " + storageService.getCurrentUser());
+    if (message.user === storageService.getCurrentUser()) {
         sendNewDashboard(message.user);
     }
 }
@@ -59,7 +61,7 @@ function sendToAll(stringObj) {
 
 function getDashboard(user) {
     if (!user) {
-        user = storageService.currentUser;
+        user = storageService.getCurrentUser();
     }
     var dashboard = storageService.getDashboard(user);
     if (!dashboard) {

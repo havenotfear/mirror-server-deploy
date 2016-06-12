@@ -1,15 +1,14 @@
 var storage = require('node-persist');
 var constants = require('./constants');
-var currentUser = null;
 var _ = require('lodash');
 
 module.exports = function () {
     var module = {
         init: function () {
             storage.initSync();
-            currentUser = storage.getItem(constants.CURRENT_USER);
+            var currentUser = storage.getItem(constants.CURRENT_USER);
             if (!currentUser) {
-                currentUser = constants.SYSTEM_USER;
+                storage.setItem(constants.CURRENT_USER, constants.SYSTEM_USER);
             }
         },
         deleteUser: function(users) {
@@ -44,17 +43,18 @@ module.exports = function () {
         },
         saveDashboard:function (user, dashboard) {
             if (!user) {
-                user = currentUser;
+                user = module.getCurrentUser();
             }
             storage.setItemSync(user, dashboard);
         },
         getUsers: function () {
             return storage.getItem(constants.USERS);
         },
-        currentUser: currentUser,
+        getCurrentUser: function() {
+            return storage.getItem(constants.CURRENT_USER);
+        },
         switchUser: function (user) {
-            module.currentUser = user;
-            storage.setItemSync(constants.CURRENT_USER, currentUser);
+            storage.setItemSync(constants.CURRENT_USER, user);
         },
         userCaptured: function (user) {
             var users = module.getUsers();
