@@ -45,8 +45,8 @@ module.exports = function (app) {
 	
 	console.log("Enable Wifi: " + JSON.stringify(request.body));
         var conn_info = {
-            wifi_ssid: request.body.wifi_ssid,
-            wifi_passcode: request.body.wifi_passcode
+            wifi_ssid: request.body.ssid,
+            wifi_passcode: request.body.passphrase
         };
         // TODO: If wifi did not come up correctly, it should fail
         // currently we ignore ifup failures.
@@ -61,7 +61,6 @@ module.exports = function (app) {
             }
             // Success! - exit
             console.log("Wifi Enabled! - Exiting");
-
             exec("sudo reboot");
         });
     });
