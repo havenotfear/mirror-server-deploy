@@ -51,10 +51,16 @@ function recheckWifi(interval, server) {
     console.log("checking wifi");
     wifiServer.isWifiEnabled(function(enabled) {
         if (enabled) {
-            restart(server);
+            startDiont();
             clearInterval(interval);
         }
     });
+}
+
+function startDiont() {
+    console.log("starting diont")
+    var diontService = require('./server/diont-service')();
+    diontService.announceServer();
 }
 
 function listen(checkWifi) {
@@ -66,9 +72,7 @@ function listen(checkWifi) {
             }, 3000);
             recheckWifi(interval, server);
         } else {
-            console.log("starting diont")
-            var diontService = require('./server/diont-service')();
-            diontService.announceServer();
+            startDiont();
         }
     });
 }
