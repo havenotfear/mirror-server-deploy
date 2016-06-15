@@ -8,7 +8,7 @@ var exec = require('child_process').exec;
 
 function saveDashboard(message) {
     storageService.saveDashboard(message.user, message.dashboard);
-    storageService.checkUser(message.user); 
+    storageService.checkUser(message.user);
     console.log("message user: " + message.user);
     console.log("currentUser: " + storageService.getCurrentUser());
     if (message.user === storageService.getCurrentUser()) {
@@ -91,8 +91,11 @@ var handleService = {
     sendDashboard: function (ws) {
         ws.send(getDashboard());
     },
-    sendRestart: function() {
-      sendReload = true;
+    sendRestart: function () {
+        sendReload = true;
+        wss.clients.forEach(function each(client) {
+            handleService.sendDashboard(client);
+        });
     },
     handleMessage: function (message, ws) {
         console.log(message);
