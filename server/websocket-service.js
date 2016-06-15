@@ -10,7 +10,10 @@ module.exports = function (server) {
         });
         messageHandler.sendDashboard(ws);
     });
-    var module = {};
-    return module;
+    return {
+        sendRestart: function() {
+            messageHandler.sendRestart();
+        }
+    };
 };
 

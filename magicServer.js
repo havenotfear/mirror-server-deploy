@@ -51,6 +51,7 @@ function recheckWifi(interval, server) {
     console.log("checking wifi");
     wifiServer.isWifiEnabled(function(enabled) {
         if (enabled) {
+            webSocketService.sendRestart();
             startDiont();
             clearInterval(interval);
         }

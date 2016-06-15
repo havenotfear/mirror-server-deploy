@@ -91,6 +91,9 @@ var handleService = {
     sendDashboard: function (ws) {
         ws.send(getDashboard());
     },
+    sendRestart: function() {
+      sendReload = true;
+    },
     handleMessage: function (message, ws) {
         console.log(message);
         message = JSON.parse(message);
