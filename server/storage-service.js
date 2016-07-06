@@ -49,11 +49,14 @@ module.exports = function () {
         },
         getUsers: function () {
             if (!storage.getItem(constants.USERS)) {
-                storage.setItem(constants.USERS, []);
+                storage.setItem(constants.USERS, [constants.SYSTEM_USER]);
             }
             return storage.getItem(constants.USERS);
         },
         getCurrentUser: function() {
+            if (!storage.getItem(constants.CURRENT_USER)) {
+                storage.setItem(constants.CURRENT_USER, constants.SYSTEM_USER)
+            }
             return storage.getItem(constants.CURRENT_USER);
         },
         switchUser: function (user) {
