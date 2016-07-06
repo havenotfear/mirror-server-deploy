@@ -48,6 +48,9 @@ module.exports = function () {
             storage.setItemSync(user, dashboard);
         },
         getUsers: function () {
+            if (!storage.getItem(constants.USERS)) {
+                storage.setItem(constants.USERS, []);
+            }
             return storage.getItem(constants.USERS);
         },
         getCurrentUser: function() {
