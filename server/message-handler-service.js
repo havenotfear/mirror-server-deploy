@@ -121,7 +121,10 @@ var handleService = {
         } else if (message.type === constants.MESSAGE_TYPES.DELETE_PROFILE) {
             storageService.deleteUser(message.user);
             switchUser(constants.SYSTEM_USER);
+        } else if (message.type === constants.MESSAGE_TYPES.USER_CAPTURE_FAIL) {
+            sendToAll(JSON.stringify(message));
         }
+
     }
 };
 
